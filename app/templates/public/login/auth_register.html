@@ -20,43 +20,42 @@
 
           <form
             class="mb-3"
-            action="{{ url_for('cpanelResgisterUserBD') }}"
+            action="{{ url_for('cpanelResgisterPacienteBD') }}"
             method="POST">
             <div class="mb-3">
-              <label for="name_surname" class="form-label">
-                Nombre y apellido
+              <label for="nombre_paciente" class="form-label">
+                Nombre del paciente
               </label>
               <input
                 type="text"
                 class="form-control"
-                name="name_surname"
+                name="nombre_paciente"
                 required
                 autofocus />
             </div>
             <div class="mb-3">
-              <label for="email_user" class="form-label">Email</label>
+              <label for="apellido_paciente" class="form-label">
+                Apellido del paciente
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                name="apellido_paciente"
+                required
+                autofocus />
+            </div>
+            <div class="mb-3">
+              <label for="email_paciente" class="form-label">Email</label>
               <input
                 type="email"
                 class="form-control"
-                name="email_user"
+                name="email_paciente"
                 required />
             </div>
-            <div class="mb-3 form-password-toggle">
-              <label class="form-label" for="pass_user">Clave</label>
-              <div class="input-group input-group-merge">
-                <input
-                  type="password"
-                  class="form-control"
-                  name="pass_user"
-                  id="pass_user"
-                  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                  aria-describedby="password"
-                  required />
-                <span class="input-group-text cursor-pointer">
-                  <i class="bx bx-hide"></i>
-                </span>
-              </div>
-            </div>
+          <div class="mb-3">
+            <label for="password_paciente" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" name="password_paciente" required />
+          </div>
             <button class="btn btn-primary w-100">
               Crear cuenta
               <i class="bi bi-arrow-right-circle"></i>

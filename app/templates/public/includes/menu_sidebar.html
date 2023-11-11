@@ -19,14 +19,14 @@
   <ul class="menu-inner py-5">
     <li
       class="menu-item {% if request.path == '/registrar-empleado' %} active {% endif %}">
-      <a href="{{ url_for('viewFormEmpleado') }}" class="menu-link">
+      <a href="{{ url_for('viewFormpaciente') }}" class="menu-link">
         <i class="menu-icon bi bi-person-bounding-box"></i>
         <div data-i18n="Basic">Registrar Paciente</div>
       </a>
     </li>
     <li
       class="menu-item {% if request.path == '/lista-de-empleados' %} active{% endif %}">
-      <a href="/lista-de-empleados" class="menu-link">
+      <a href="/lista-de-paciente" class="menu-link">
         <i class="menu-icon bi bi-person-lines-fill"></i>
         <div data-i18n="Boxicons">Lista de Pacientes</div>
       </a>

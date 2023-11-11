@@ -18,7 +18,7 @@
           id="search"
           class="form-control border-0 shadow-none"
           placeholder="Buscar empleado..."
-          onkeyup="buscadorTable('tbl_empleados')" />
+          onkeyup="buscadorTable('users')" />
       </div>
     </div>
 
@@ -26,7 +26,7 @@
       <div class="table-responsive text-nowrap table-hover">
         <table
           table-hover
-          id="tbl_empleados"
+          id="patients"
           class="table table-striped table-bordered"
           cellspacing="0"
           width="100%">
@@ -35,26 +35,21 @@
               <th>#</th>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>Sexo</th>
-              <th>ID Clinico</th>
+              <th>Email</th>
               <th>Acción</th>
             </tr>
           </thead>
           <tbody>
-            {% for empleado in empleados %}
-            <tr id="empleado_{{ empleado.id_empleado }}">
+            {% for paciente in pacientes %}
+            <tr id="paciente_{{ paciente.id }}">
               <td>{{ loop.index }}</td>
-              <td>{{ empleado.nombre_empleado }}</td>
-              <td>{{ empleado.apellido_empleado }}</td>
-              <td>{{ empleado.sexo_empleado }}</td>
-              <td>
-                $ {{ '{:,.0f}'.format(empleado.salario_empleado).replace(',',
-                '.')}}
-              </td>
+              <td>{{ paciente.first_name }}</td>
+              <td>{{ paciente.last_name }}</td>
+              <td>{{ paciente.email }}</td>
               <td width="10px">
                 <a
-                  href="/detalles-empleado/{{ empleado.id_empleado }}"
-                  title="Ver envio"
+                  href="/detalles-paciente/{{ paciente.id }}"
+                  title="Ver detalles"
                   type="button"
                   class="btn btn-info btn-sm"
                   data-bs-toggle="tooltip"
@@ -66,7 +61,7 @@
                   Ver detalles
                 </a>
                 <a
-                  href="{{ url_for('viewEditarEmpleado', id = empleado.id_empleado) }}"
+                  href="{{ url_for('viewEditarpaciente', id = paciente.id) }}"
                   class="btn btn-success btn-sm"
                   tooltip="Actualizar Registro">
                   <i class="bi bi-arrow-clockwise"></i>
@@ -74,13 +69,13 @@
                 </a>
                 <a
                   href="#"
-                  onclick="eliminarEmpleado('{{ empleado.id_empleado }}','{{ empleado.foto_empleado }}');"
+                  onclick="eliminarpaciente('{{ paciente.id }}');"
                   class="btn btn-danger btn-sm"
                   data-bs-toggle="tooltip"
                   data-bs-offset="0,4"
                   data-bs-placement="top"
                   data-bs-html="true"
-                  title="<span>Eliminar empleado {{ empleado.nombre_empleado }}</span>">
+                  title="<span>Eliminar paciente {{ paciente.first_name }}</span>">
                   <i class="bi bi-trash3"></i>
                   Eliminar
                 </a>
@@ -91,6 +86,7 @@
         </table>
       </div>
     </div>
+    
   </div>
 </div>
 

@@ -49,23 +49,24 @@ def cpanelRecoveryPassUser():
 
 # Crear cuenta de usuario
 @app.route('/saved-register', methods=['POST'])
-def cpanelResgisterUserBD():
-    if request.method == 'POST' and 'name_surname' in request.form and 'pass_user' in request.form:
-        name_surname = request.form['name_surname']
-        email_user = request.form['email_user']
-        pass_user = request.form['pass_user']
+def cpanelResgisterPacienteBD():
+    if request.method == 'POST' and 'nombre_paciente' in request.form and 'email_paciente' in request.form:
+        nombre_paciente = request.form['nombre_paciente']
+        apellido_paciente = request.form['apellido_paciente']
+        email_paciente = request.form['email_paciente']
+        password_paciente = request.form['password_paciente']
 
-        resultData = recibeInsertRegisterUser(
-            name_surname, email_user, pass_user)
-        if (resultData != 0):
-            flash('la cuenta fue creada correctamente.', 'success')
+        resultData = recibeInsertPaciente(
+            nombre_paciente, apellido_paciente, email_paciente, password_paciente)
+        if resultData:
+            flash('El paciente ha sido registrado correctamente.', 'success')
             return redirect(url_for('inicio'))
         else:
+            flash('No se pudo registrar al paciente.', 'error')
             return redirect(url_for('inicio'))
     else:
-        flash('el método HTTP es incorrecto', 'error')
+        flash('Método HTTP incorrecto o datos faltantes en el formulario.', 'error')
         return redirect(url_for('inicio'))
-
 
 # Actualizar datos de mi perfil
 @app.route("/actualizar-datos-perfil", methods=['POST'])
@@ -101,24 +102,23 @@ def loginCliente():
         return redirect(url_for('inicio'))
     else:
         if request.method == 'POST' and 'email_user' in request.form and 'pass_user' in request.form:
-
             email_user = str(request.form['email_user'])
             pass_user = str(request.form['pass_user'])
-
+            print(email_user, pass_user)
             # Comprobando si existe una cuenta
             conexion_MySQLdb = connectionBD()
             cursor = conexion_MySQLdb.cursor(dictionary=True)
             cursor.execute(
-                "SELECT * FROM users WHERE email_user = %s", [email_user])
+                "SELECT * FROM users WHERE email = %s", [email_user])
             account = cursor.fetchone()
 
             if account:
-                if check_password_hash(account['pass_user'], pass_user):
+                if check_password_hash(account['password'], pass_user):
                     # Crear datos de sesión, para poder acceder a estos datos en otras rutas
                     session['conectado'] = True
                     session['id'] = account['id']
-                    session['name_surname'] = account['name_surname']
-                    session['email_user'] = account['email_user']
+                    session['name_surname'] = f"{account['first_name']} {account['last_name']}"
+                    session['email_user'] = account['email']
 
                     flash('la sesión fue correcta.', 'success')
                     return redirect(url_for('inicio'))

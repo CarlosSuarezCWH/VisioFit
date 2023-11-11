@@ -11,17 +11,16 @@ import re
 from werkzeug.security import generate_password_hash
 
 
-def recibeInsertRegisterUser(name_surname, email_user, pass_user):
-    respuestaValidar = validarDataRegisterLogin(
-        name_surname, email_user, pass_user)
 
-    if (respuestaValidar):
-        nueva_password = generate_password_hash(pass_user, method='scrypt')
+def recibeInsertPaciente(nombre_paciente, apellido_paciente, email_paciente, password_paciente):
+    respuestaValidar = validarDataRegisterLogin(nombre_paciente, email_paciente, password_paciente)
+    if respuestaValidar:
+        password_encriptada = generate_password_hash(password_paciente, method='scrypt')
         try:
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
-                    sql = "INSERT INTO users(name_surname, email_user, pass_user) VALUES (%s, %s, %s)"
-                    valores = (name_surname, email_user, nueva_password)
+                    sql = "INSERT INTO users(first_name, last_name, email, password, type_user) VALUES (%s, %s, %s, %s, 'regular')"
+                    valores = (nombre_paciente, apellido_paciente, email_paciente, password_encriptada)
                     mycursor.execute(sql, valores)
                     conexion_MySQLdb.commit()
                     resultado_insert = mycursor.rowcount
@@ -32,13 +31,12 @@ def recibeInsertRegisterUser(name_surname, email_user, pass_user):
     else:
         return False
 
-
 # Validando la data del Registros para el login
 def validarDataRegisterLogin(name_surname, email_user, pass_user):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT * FROM users WHERE email_user = %s"
+                querySQL = "SELECT * FROM users WHERE email = %s"
                 cursor.execute(querySQL, (email_user,))
                 userBD = cursor.fetchone()  # Obtener la primera fila de resultados
 
@@ -86,11 +84,11 @@ def procesar_update_perfil(data_form):
 
     with connectionBD() as conexion_MySQLdb:
         with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-            querySQL = """SELECT * FROM users WHERE email_user = %s LIMIT 1"""
+            querySQL = """SELECT * FROM users WHERE email = %s LIMIT 1"""
             cursor.execute(querySQL, (email_user,))
             account = cursor.fetchone()
             if account:
-                if check_password_hash(account['pass_user'], pass_actual):
+                if check_password_hash(account['password'], pass_actual):
                     # Verificar si new_pass_user y repetir_pass_user están vacías
                     if not new_pass_user or not repetir_pass_user:
                         return updatePefilSinPass(id_user, name_surname)
