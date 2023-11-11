@@ -52,6 +52,7 @@ def detallepaciente(idpaciente=None):
             return redirect(url_for('inicio'))
         else:
             detalle_paciente = sql_detalles_pacienteBD(idpaciente) or []
+            print(detalle_paciente)
             return render_template(f'{PATH_URL}/detalles_paciente.html', detalle_paciente=detalle_paciente)
     else:
         flash('Primero debes iniciar sesión.', 'error')

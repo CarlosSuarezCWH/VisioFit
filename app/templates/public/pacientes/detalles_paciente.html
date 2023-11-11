@@ -11,7 +11,6 @@
 <!--Inicio del block-->
 {% block body %}
 <!---->
-{% if (detalle_empleado|length) %}
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
@@ -34,31 +33,14 @@
               Nombre del empleado
             </label>
             <br />
-            {{ detalle_empleado.nombre_empleado}}
+            {{ detalle_paciente.first_name }}
           </div>
           <div class="col-md-6">
             <label for="apellido_empleado" class="form-label">
               Apellido del empleado
             </label>
             <br />
-            {{ detalle_empleado.apellido_empleado}}
-          </div>
-        </div>
-
-        <div class="row mt-2">
-          <div class="col-md-6">
-            <label for="sexo_empleado" class="form-label">
-              Sexo del empleado
-            </label>
-            <br />
-            {{ detalle_empleado.sexo_empleado}}
-          </div>
-          <div class="col-md-6">
-            <label for="telefono_empleado" class="form-label">
-              Telefono del empleado
-            </label>
-            <br />
-            {{ detalle_empleado.telefono_empleado}}
+            {{ detalle_paciente.last_name }}
           </div>
         </div>
 
@@ -68,33 +50,17 @@
               Email del empleado
             </label>
             <br />
-            {{ detalle_empleado.email_empleado}}
-          </div>
-          <div class="col-md-6">
-            <label for="profesion_empleado" class="form-label">
-              Profesión del empleado
-            </label>
-            <br />
-            {{ detalle_empleado.profesion_empleado}}
+            {{ detalle_paciente.email }}
           </div>
         </div>
 
         <div class="row mt-2">
           <div class="col-md-6">
-            <label for="salario_empleado" class="form-label">
-              Salario del empleado
-            </label>
-            <br />
-            $ {{
-            '{:,.0f}'.format(detalle_empleado.salario_empleado).replace(',',
-            '.')}}
-          </div>
-          <div class="col-md-6">
             <label for="" class="form-label"> IMAGEN DEL EMPLEADO </label>
             <br />
             <img
               style="width: 200px"
-              src="/static/fotos_empleados/{{ detalle_empleado.foto_empleado }}"
+              src="/static/fotos_empleados/{{ detalle_paciente.foto }}"
               alt="imagen-empleado" />
           </div>
         </div>
@@ -102,9 +68,5 @@
     </div>
   </div>
 </div>
-{% else %}
-<h2 class="text-center">
-  No existe el Empleado 😭
-  <hr />
-</h2>
-{% endif %} {% endblock %}
+
+{% endblock %}

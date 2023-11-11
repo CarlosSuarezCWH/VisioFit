@@ -100,25 +100,21 @@ def sql_detalles_pacienteBD(idpaciente):
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 querySQL = ("""
                     SELECT 
-                        e.id_paciente,
-                        e.nombre_paciente, 
-                        e.apellido_paciente,
-                        e.salario_paciente,
-                        CASE
-                            WHEN e.sexo_paciente = 1 THEN 'Masculino'
-                            ELSE 'Femenino'
-                        END AS sexo_paciente,
-                        e.telefono_paciente, 
-                        e.email_paciente,
-                        e.profesion_paciente,
-                        e.foto_paciente,
-                        DATE_FORMAT(e.fecha_registro, '%Y-%m-%d %h:%i %p') AS fecha_registro
-                    FROM tbl_paciente AS e
-                    WHERE id_paciente =%s
-                    ORDER BY e.id_paciente DESC
+                        id,
+                        first_name,
+                        last_name,
+                        email,
+                        password,
+                        type_user,
+                        created_at,
+                        updated_at,
+                        photo
+                    FROM users
+                    WHERE id = %s;
                     """)
                 cursor.execute(querySQL, (idpaciente,))
                 pacienteBD = cursor.fetchone()
+                #print (pacienteBD)
         return pacienteBD
     except Exception as e:
         print(
