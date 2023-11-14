@@ -108,12 +108,13 @@ def borrarUsuario(id):
         return redirect(url_for('usuarios'))
 
 
-@app.route('/borrar-paciente/<string:id_paciente>/<string:foto_paciente>', methods=['GET'])
-def borrarpaciente(id_paciente, foto_paciente):
-    resp = eliminarpaciente(id_paciente, foto_paciente)
+@app.route('/borrar-paciente/<int:id_paciente>', methods=['GET'])
+def borrarpaciente(id_paciente ):
+    print(id_paciente)
+    resp = eliminarpaciente(id_paciente)
     if resp:
         flash('El paciente fue eliminado correctamente', 'success')
-        return redirect(url_for('lista_paciente'))
+        return redirect(url_for('lista_pacientes'))
 
 
 @app.route("/descargar-informe-paciente/", methods=['GET'])

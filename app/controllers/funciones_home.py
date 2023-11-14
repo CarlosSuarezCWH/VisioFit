@@ -24,17 +24,15 @@ def procesar_form_paciente(dataForm, foto_perfil):
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
 
-                sql = "INSERT INTO tbl_paciente (nombre_paciente, apellido_paciente, sexo_paciente, telefono_paciente, email_paciente, profesion_paciente, foto_paciente, salario_paciente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                sql = "INSERT INTO users (nombre_paciente, apellido_paciente, sexo_paciente, email_paciente, foto_paciente) VALUES (%s, %s, %s, %s, %s)"
 
                 # Creando una tupla con los valores del INSERT
                 valores = (dataForm['nombre_paciente'], dataForm['apellido_paciente'], dataForm['sexo_paciente'],
-                           dataForm['telefono_paciente'], dataForm['email_paciente'], dataForm['profesion_paciente'], result_foto_perfil, salario_entero)
+                           dataForm['telefono_paciente'], dataForm['email_paciente'], dataForm['profesion_paciente'], result_foto_perfil)
                 cursor.execute(sql, valores)
-
                 conexion_MySQLdb.commit()
                 resultado_insert = cursor.rowcount
                 return resultado_insert
-
     except Exception as e:
         return f'Se produjo un error en procesar_form_paciente: {str(e)}'
 
@@ -240,17 +238,17 @@ def buscarpacienteUnico(id):
             with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
                 querySQL = ("""
                         SELECT 
-                            e.id_paciente,
-                            e.nombre_paciente, 
-                            e.apellido_paciente,
-                            e.sexo_paciente,
-                            e.telefono_paciente,
-                            e.email_paciente,
-                            e.profesion_paciente,
-                            e.salario_paciente,
-                            e.foto_paciente
-                        FROM tbl_paciente AS e
-                        WHERE e.id_paciente =%s LIMIT 1
+                            id,
+                            first_name,
+                            last_name,
+                            email,
+                            password,
+                            type_user,
+                            created_at,
+                            updated_at,
+                            photo
+                        FROM users AS e
+                        WHERE id =%s LIMIT 1
                     """)
                 mycursor.execute(querySQL, (id,))
                 paciente = mycursor.fetchone()
@@ -338,28 +336,21 @@ def lista_usuariosBD():
 
 
 # Eliminar upaciente
-def eliminarpaciente(id_paciente, foto_paciente):
+def eliminarpaciente(id_paciente):
+    print(id_paciente)
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "DELETE FROM tbl_paciente WHERE id_paciente=%s"
+                querySQL = "DELETE FROM users WHERE id=%s"
                 cursor.execute(querySQL, (id_paciente,))
                 conexion_MySQLdb.commit()
                 resultado_eliminar = cursor.rowcount
-
-                if resultado_eliminar:
-                    # Eliminadon foto_paciente desde el directorio
-                    basepath = path.dirname(__file__)
-                    url_File = path.join(
-                        basepath, '../static/fotos_paciente', foto_paciente)
-
-                    if path.exists(url_File):
-                        remove(url_File)  # Borrar foto desde la carpeta
-
+        print(cursor.rowcount)
         return resultado_eliminar
     except Exception as e:
         print(f"Error en eliminarpaciente : {e}")
         return []
+
 
 
 # Eliminar usuario
@@ -371,7 +362,6 @@ def eliminarUsuario(id):
                 cursor.execute(querySQL, (id,))
                 conexion_MySQLdb.commit()
                 resultado_eliminar = cursor.rowcount
-
         return resultado_eliminar
     except Exception as e:
         print(f"Error en eliminarUsuario : {e}")

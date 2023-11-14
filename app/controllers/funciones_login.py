@@ -12,15 +12,21 @@ from werkzeug.security import generate_password_hash
 
 
 
-def recibeInsertPaciente(nombre_paciente, apellido_paciente, email_paciente, password_paciente):
+def recibeInsertPaciente(nombre_paciente, apellido_paciente, email_paciente, password_paciente, id_clinico=None):
     respuestaValidar = validarDataRegisterLogin(nombre_paciente, email_paciente, password_paciente)
     if respuestaValidar:
         password_encriptada = generate_password_hash(password_paciente, method='scrypt')
         try:
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
-                    sql = "INSERT INTO users(first_name, last_name, email, password, type_user) VALUES (%s, %s, %s, %s, 'regular')"
-                    valores = (nombre_paciente, apellido_paciente, email_paciente, password_encriptada)
+                    # Modificamos la consulta SQL para incluir id_clinico solo si se proporciona
+                    if id_clinico is not None:
+                        sql = "INSERT INTO users(first_name, last_name, email, password, type_user, id_clinicak) VALUES (%s, %s, %s, %s, 'regular', %s)"
+                        valores = (nombre_paciente, apellido_paciente, email_paciente, password_encriptada, id_clinico)
+                    else:
+                        sql = "INSERT INTO users(first_name, last_name, email, password, type_user) VALUES (%s, %s, %s, %s, 'regular')"
+                        valores = (nombre_paciente, apellido_paciente, email_paciente, password_encriptada)
+
                     mycursor.execute(sql, valores)
                     conexion_MySQLdb.commit()
                     resultado_insert = mycursor.rowcount
@@ -30,6 +36,7 @@ def recibeInsertPaciente(nombre_paciente, apellido_paciente, email_paciente, pas
             return []
     else:
         return False
+
 
 # Validando la data del Registros para el login
 def validarDataRegisterLogin(name_surname, email_user, pass_user):

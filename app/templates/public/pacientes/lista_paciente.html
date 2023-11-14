@@ -42,7 +42,7 @@
           <tbody>
             {% for paciente in pacientes %}
             <tr id="paciente_{{ paciente.id }}">
-              <td>{{ loop.index }}</td>
+              <td>{{ paciente.id }}</td>
               <td>{{ paciente.first_name }}</td>
               <td>{{ paciente.last_name }}</td>
               <td>{{ paciente.email }}</td>
@@ -68,16 +68,13 @@
                   Actualizar
                 </a>
                 <a
-                  href="#"
-                  onclick="eliminarpaciente('{{ paciente.id }}');"
-                  class="btn btn-danger btn-sm"
-                  data-bs-toggle="tooltip"
-                  data-bs-offset="0,4"
-                  data-bs-placement="top"
-                  data-bs-html="true"
-                  title="<span>Eliminar paciente {{ paciente.first_name }}</span>">
-                  <i class="bi bi-trash3"></i>
-                  Eliminar
+                href="{{ url_for('borrarpaciente', id_paciente=paciente.id) }}"
+                class="btn btn-danger btn-sm"
+                data-bs-toggle="tooltip"
+                data-bs-offset="0,4"
+                data-bs-placement="top"
+                data-bs-html="true">
+                Eliminar paciente
                 </a>
               </td>
             </tr>

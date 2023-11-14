@@ -7,7 +7,6 @@
   rel="stylesheet"
   href="{{ url_for('static', filename ='assets/css/file.css') }}" />
 {% endblock %}
-
 <!--Inicio del block-->
 {% block body %}
 <!---->
@@ -60,7 +59,7 @@
             <br />
             <img
               style="width: 200px"
-              src="/static/fotos_empleados/{{ detalle_paciente.foto }}"
+              src="/static/fotos_pacientes/{{ detalle_paciente.foto }}"
               alt="imagen-empleado" />
           </div>
         </div>
@@ -69,4 +68,7 @@
   </div>
 </div>
 
+{% endblock %}
+{% block customJS %}
+<script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
 {% endblock %}

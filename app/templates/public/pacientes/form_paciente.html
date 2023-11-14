@@ -1,6 +1,6 @@
 {% extends 'public/base_cpanel.html' %}
-<!--Cambiando el title-->
-{% block title %}Crud con Python 🐍 | Registrar Empleado{% endblock %}
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Paciente{% endblock %}
 <!---->
 {% block customCSS %}
 <link
@@ -8,7 +8,7 @@
   href="{{ url_for('static', filename ='assets/css/file.css') }}" />
 {% endblock %}
 
-<!--Inicio del block-->
+<!-- Inicio del block -->
 {% block body %}
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
@@ -23,92 +23,66 @@
       <form
         class="form-horizontal mx-auto"
         method="POST"
-        action="/form-registrar-empleado"
+        action="{{ url_for('cpanelResgisterPacienteBD') }}"
         autocomplete="off"
         enctype="multipart/form-data">
         <div class="card-body">
           <div class="row">
             <div class="col-md-6">
-              <label for="nombre_empleado" class="form-label">
+              <label for="nombre_paciente" class="form-label">
                 Nombre del paciente
               </label>
               <input
                 type="text"
-                name="nombre_empleado"
+                name="nombre_paciente"
                 class="form-control"
                 required />
             </div>
             <div class="col-md-6">
-              <label for="apellido_empleado" class="form-label">
+              <label for="apellido_paciente" class="form-label">
                 Apellido del paciente
               </label>
               <input
                 class="form-control"
                 type="text"
-                name="apellido_empleado"
+                name="apellido_paciente"
                 required />
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col-md-6">
-              <label for="sexo_empleado" class="form-label">
-                Sexo del paciente
-              </label>
-              <select
-                class="form-select"
-                name="sexo_empleado"
-                aria-label="Default select example">
-                <option selected>Seleccione</option>
-                <option value="1">Masculino</option>
-                <option value="2">Femenino</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label for="telefono_empleado" class="form-label">
-                Telefono del paciente
-              </label>
-              <input
-                class="form-control"
-                type="text"
-                name="telefono_empleado"
-                required />
-            </div>
-          </div>
-
-          <div class="row mt-2">
-            <div class="col-md-6">
-              <label for="email_empleado" class="form-label">
+              <label for="email_paciente" class="form-label">
                 Email del paciente
               </label>
               <input
                 class="form-control"
                 type="email"
-                name="email_empleado"
+                name="email_paciente"
                 required />
             </div>
             <div class="col-md-6">
-              <label for="profesion_empleado" class="form-label">
-                Profesión del paciente
+              <label for="password_paciente" class="form-label">
+                Password del paciente
               </label>
               <input
                 class="form-control"
-                type="text"
-                name="profesion_empleado"
+                type="password"
+                name="password_paciente"
                 required />
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col-md-6">
-              <label for="salario_empleado" class="form-label">
-                ID Clinico
+              <label for="id_clinico" class="form-label">
+                ID Clínico
               </label>
               <input
                 class="form-control"
                 type="text"
-                name="salario_empleado"
-                id="salario_empleado"
+                name="id_clinico"
+                id="id_clinico"
                 required />
             </div>
             <div class="col-md-6">
@@ -119,7 +93,7 @@
                 <div class="avatar-edit">
                   <input
                     type="file"
-                    name="foto_empleado"
+                    name="foto_paciente"
                     id="imageUpload"
                     accept=".png, .jpg, .jpeg" />
                   <label for="imageUpload"><i class="bi bi-pen"></i></label>
@@ -148,5 +122,7 @@
     </div>
   </div>
 </div>
-{% endblock %} {% block customJS %}
+{% endblock %}
+{% block customJS %}
+<script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
 {% endblock %}

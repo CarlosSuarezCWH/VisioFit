@@ -30,7 +30,7 @@ def perfil():
 
 
 # Crear cuenta de usuario
-@app.route('/register-user', methods=['GET'])
+@app.route('/register-paciente', methods=['GET'])
 def cpanelRegisterUser():
     if 'conectado' in session:
         return redirect(url_for('inicio'))
@@ -55,9 +55,9 @@ def cpanelResgisterPacienteBD():
         apellido_paciente = request.form['apellido_paciente']
         email_paciente = request.form['email_paciente']
         password_paciente = request.form['password_paciente']
-
+        id_clinico = request.form['id_clinico']
         resultData = recibeInsertPaciente(
-            nombre_paciente, apellido_paciente, email_paciente, password_paciente)
+            nombre_paciente, apellido_paciente, email_paciente, password_paciente, id_clinico)
         if resultData:
             flash('El paciente ha sido registrado correctamente.', 'success')
             return redirect(url_for('inicio'))
