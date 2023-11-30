@@ -1,7 +1,7 @@
 
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
-
+from routers.router_login import *
 # Importando mi conexión a BD
 from conexion.conexionBD import connectionBD
 
@@ -23,19 +23,35 @@ def inicio():
 
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
+    url = "/mi-perfil"
     if 'conectado' in session:
+        # Obtener el ID de la cuenta desde la sesión
+        user_id = session.get('id')
+
+        # Registrar la visualización del perfil en la base de datos 
+        register_login_log(user_id, url)
+
         return render_template(f'public/perfil/perfil.html', info_perfil_session=info_perfil_session())
     else:
         return redirect(url_for('inicio'))
 
 
-# Crear cuenta de usuario
+
 @app.route('/register-paciente', methods=['GET'])
 def cpanelRegisterUser():
+    url = "/register-paciente"
     if 'conectado' in session:
         return redirect(url_for('inicio'))
     else:
+        # No hay un usuario conectado, registrar la visualización de la página
+        # Obtener el ID de la cuenta desde la sesión (puede ser None si no hay usuario conectado)
+        user_id = session.get('id')
+
+        # Registrar la visualización de la página en la base de datos
+        register_login_log(user_id, url)
+
         return render_template(f'{PATH_URL_LOGIN}/auth_register.html')
+
 
 
 # Recuperar cuenta de usuario
@@ -55,9 +71,9 @@ def cpanelResgisterPacienteBD():
         apellido_paciente = request.form['apellido_paciente']
         email_paciente = request.form['email_paciente']
         password_paciente = request.form['password_paciente']
-        id_clinico = request.form['id_clinico']
+
         resultData = recibeInsertPaciente(
-            nombre_paciente, apellido_paciente, email_paciente, password_paciente, id_clinico)
+            nombre_paciente, apellido_paciente, email_paciente, password_paciente)
         if resultData:
             flash('El paciente ha sido registrado correctamente.', 'success')
             return redirect(url_for('inicio'))
@@ -75,23 +91,31 @@ def actualizarPerfil():
         if 'conectado' in session:
             respuesta = procesar_update_perfil(request.form)
             if respuesta == 1:
-                flash('Los datos fuerón actualizados correctamente.', 'success')
+                # Los datos fueron actualizados correctamente
+                flash('Los datos fueron actualizados correctamente.', 'success')
+
+                # Obtener el ID de la cuenta desde la sesión
+                user_id = session.get('id')
+
+                # Registrar la actualización del perfil en la base de datos 
+                url = "/actualizar-datos-perfil"
+                register_login_log(user_id, url)
+
                 return redirect(url_for('inicio'))
             elif respuesta == 0:
-                flash(
-                    'La contraseña actual esta incorrecta, por favor verifique.', 'error')
+                flash('La contraseña actual es incorrecta, por favor verifique.', 'error')
                 return redirect(url_for('perfil'))
             elif respuesta == 2:
-                flash('Ambas claves deben se igual, por favor verifique.', 'error')
+                flash('Ambas claves deben ser iguales, por favor verifique.', 'error')
                 return redirect(url_for('perfil'))
             elif respuesta == 3:
-                flash('La Clave actual es obligatoria.', 'error')
+                flash('La clave actual es obligatoria.', 'error')
                 return redirect(url_for('perfil'))
         else:
-            flash('primero debes iniciar sesión.', 'error')
+            flash('Primero debes iniciar sesión.', 'error')
             return redirect(url_for('inicio'))
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
 
@@ -104,12 +128,11 @@ def loginCliente():
         if request.method == 'POST' and 'email_user' in request.form and 'pass_user' in request.form:
             email_user = str(request.form['email_user'])
             pass_user = str(request.form['pass_user'])
-            print(email_user, pass_user)
+            
             # Comprobando si existe una cuenta
             conexion_MySQLdb = connectionBD()
             cursor = conexion_MySQLdb.cursor(dictionary=True)
-            cursor.execute(
-                "SELECT * FROM users WHERE email = %s", [email_user])
+            cursor.execute("SELECT * FROM users WHERE email = %s", [email_user])
             account = cursor.fetchone()
 
             if account:
@@ -119,6 +142,12 @@ def loginCliente():
                     session['id'] = account['id']
                     session['name_surname'] = f"{account['first_name']} {account['last_name']}"
                     session['email_user'] = account['email']
+                    session['type_user'] = account['type_user']  # Agregar el tipo de usuario a la sesión
+
+                    # Registrar el inicio de sesión en la base de datos 
+                    url = "/"
+                    user_id = account['id']  # Obtener el ID de la cuenta
+                    register_login_log(user_id, url)
 
                     flash('la sesión fue correcta.', 'success')
                     return redirect(url_for('inicio'))
@@ -134,17 +163,26 @@ def loginCliente():
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
 
 
+
 @app.route('/closed-session',  methods=['GET'])
 def cerraSesion():
     if request.method == 'GET':
         if 'conectado' in session:
+            # Obtener el ID de la cuenta desde la sesión
+            user_id = session.get('id')
+
+            # Registrar el cierre de sesión en la base de datos 
+            url = "/closed-session"
+            register_login_log(user_id, url)
+
             # Eliminar datos de sesión, esto cerrará la sesión del usuario
             session.pop('conectado', None)
             session.pop('id', None)
             session.pop('name_surname', None)
-            session.pop('email', None)
-            flash('tu sesión fue cerrada correctamente.', 'success')
+            session.pop('email_user', None)
+
+            flash('Tu sesión fue cerrada correctamente.', 'success')
             return redirect(url_for('inicio'))
         else:
-            flash('recuerde debe iniciar sesión.', 'error')
+            flash('Recuerde debe iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')

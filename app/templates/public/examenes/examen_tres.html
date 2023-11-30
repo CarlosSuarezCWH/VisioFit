@@ -1,0 +1,54 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block body %}
+  <div class="row justify-content-center mb-2">
+    <div class="table-responsive text-nowrap table-hover">
+      <button id="cambiarImagenBtn" onclick="cambiarImagen()" style="position: absolute; top: 80%; left:85%; transform: translate(-50%, -50%); padding: 10px 15px; font-size: 14px; background-color: #08b324; color: #fff; border: none; border-radius: 25px;">Cambiar Imagen</button>
+      <img id="imagen1" style="max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/tercer_nivel/inicio.png') }}" >
+      <img id="imagen2" style="display: none; max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/tercer_nivel/2.png') }}" >
+      <img id="imagen3" style="display: none; max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/tercer_nivel/3.png') }}" >
+      <img id="imagen4" style="display: none; max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/tercer_nivel/4.png') }}" >
+      <img id="imagen5" style="display: none; max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/tercer_nivel/5.png') }}" >
+      <img id="imagen6" style="display: none; max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/primer_nivel/fin.png') }}" >
+    
+    
+    </div>
+  </div>
+
+
+
+  <script>
+    var imageIndex = 2; // Iniciar con la imagen 2
+    var totalImages = 6;
+    var btnDisabled = false;
+
+    function cambiarImagen() {
+      // No permitir más clics cuando todas las imágenes se han mostrado
+      if (imageIndex > totalImages) {
+        btnDisabled = true;
+        return;
+      }
+
+      // Mostrar la imagen al hacer clic en el botón
+      var currentImage = document.getElementById('imagen' + imageIndex);
+      currentImage.style.display = 'block';
+
+      // Ocultar la imagen anterior
+      if (imageIndex > 1) {
+        var previousImage = document.getElementById('imagen' + (imageIndex - 1));
+        previousImage.style.display = 'none';
+      }
+
+      // Incrementar el índice para la siguiente imagen
+      imageIndex++;
+
+      // Deshabilitar el botón durante 30 segundos si aún no se han mostrado todas las imágenes
+      if (!btnDisabled) {
+        document.getElementById('cambiarImagenBtn').disabled = true;
+        setTimeout(function() {
+          document.getElementById('cambiarImagenBtn').disabled = false;
+        }, 3000);
+      }
+    }
+  </script>
+{% endblock %}

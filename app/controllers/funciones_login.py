@@ -1,6 +1,5 @@
 # Importandopaquetes desde flask
 from flask import session, flash
-
 # Importando conexion a BD
 from conexion.conexionBD import connectionBD
 # Para  validar contraseña
@@ -9,8 +8,25 @@ from werkzeug.security import check_password_hash
 import re
 # Para encriptar contraseña generate_password_hash
 from werkzeug.security import generate_password_hash
+from datetime import datetime
+import traceback
 
-
+def register_login_log(user_id, accessed_url):
+    connection = connectionBD()
+    
+    if connection:
+        try:
+            cursor = connection.cursor()
+            timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            query = f"INSERT INTO login_logs (user_id, timestamp, accessed_url) VALUES ({user_id}, '{timestamp}', '{accessed_url}')"
+            cursor.execute(query)
+            connection.commit()
+            cursor.close()
+        except Exception as e:
+            print(f"Error al registrar el inicio de sesión: {e}")
+            traceback.print_exc()  # Imprime el rastreo de la pila para obtener más detalles sobre el error.
+        finally:
+            connection.close()
 
 def recibeInsertPaciente(nombre_paciente, apellido_paciente, email_paciente, password_paciente, id_clinico=None):
     respuestaValidar = validarDataRegisterLogin(nombre_paciente, email_paciente, password_paciente)
@@ -68,7 +84,7 @@ def info_perfil_session():
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT name_surname, email_user FROM users WHERE id = %s"
+                querySQL = "SELECT last_name, email FROM users WHERE id = %s"
                 cursor.execute(querySQL, (session['id'],))
                 info_perfil = cursor.fetchall()
         return info_perfil

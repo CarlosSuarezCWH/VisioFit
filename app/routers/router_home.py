@@ -1,8 +1,7 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session,  jsonify
 from mysql.connector.errors import Error
-
-
+from controllers.funciones_login import *
 # Importando cenexión a BD
 from controllers.funciones_home import *
 
@@ -11,10 +10,17 @@ PATH_URL = "public/pacientes"
 
 @app.route('/registrar-paciente', methods=['GET'])
 def viewFormpaciente():
+    url = "/registrar-paciente"
     if 'conectado' in session:
+        # Obtener el ID de la cuenta desde la sesión
+        user_id = session.get('id')
+
+        # Registrar la visualización de la página en la base de datos
+        register_login_log(user_id, url)
+
         return render_template(f'{PATH_URL}/form_paciente.html')
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
 
@@ -36,17 +42,32 @@ def formpacientes():
 
 @app.route('/lista-de-paciente', methods=['GET'])
 def lista_pacientes():
+    url = "/lista-de-paciente"
     if 'conectado' in session:
+        # Obtener el ID de la cuenta desde la sesión
+        user_id = session.get('id')
+
+        # Registrar la visualización de la página en la base de datos
+        register_login_log(user_id, url)
+
         return render_template(f'{PATH_URL}/lista_paciente.html', pacientes=sql_lista_pacienteBD())
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
 
 
 @app.route("/detalles-paciente/", methods=['GET'])
 @app.route("/detalles-paciente/<int:idpaciente>", methods=['GET'])
 def detallepaciente(idpaciente=None):
+    url = f"/detalles-paciente/{idpaciente}"
     if 'conectado' in session:
+        # Obtener el ID de la cuenta desde la sesión
+        user_id = session.get('id')
+
+        # Registrar la visualización de la página en la base de datos
+        register_login_log(user_id, url)
+
         # Verificamos si el parámetro idpaciente es None o no está presente en la URL
         if idpaciente is None:
             return redirect(url_for('inicio'))
@@ -57,6 +78,7 @@ def detallepaciente(idpaciente=None):
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
 
 
 # Buscadon de pacientes
@@ -71,7 +93,14 @@ def viewBuscarpacienteBD():
 
 @app.route("/editar-paciente/<int:id>", methods=['GET'])
 def viewEditarpaciente(id):
+    url = f"/editar-paciente/{id}"
     if 'conectado' in session:
+        # Obtener el ID de la cuenta desde la sesión
+        user_id = session.get('id')
+
+        # Registrar la visualización de la página en la base de datos
+        register_login_log(user_id, url)
+
         respuestapaciente = buscarpacienteUnico(id)
         if respuestapaciente:
             return render_template(f'{PATH_URL}/form_paciente_update.html', respuestapaciente=respuestapaciente)
@@ -117,10 +146,46 @@ def borrarpaciente(id_paciente ):
         return redirect(url_for('lista_pacientes'))
 
 
-@app.route("/descargar-informe-paciente/", methods=['GET'])
+@app.route("/descargar-informe-pacientes/", methods=['GET'])
 def reporteBD():
     if 'conectado' in session:
         return generarReporteExcel()
     else:
         flash('primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
+@app.route("/examen-uno")
+def examen_uno():
+    url = "/examen-uno"
+    
+    # Aquí puedes definir user_id según tu lógica de sesión
+    user_id = session.get('id') if 'conectado' in session else None
+
+    # Registrar la visualización de la página en la base de datos
+    register_login_log(user_id, url)
+
+    return render_template('public/examenes/examen_uno.html')
+
+@app.route("/examen-dos")
+def examen_dos():
+    url = "/examen-dos"
+    
+    # Aquí puedes definir user_id según tu lógica de sesión
+    user_id = session.get('id') if 'conectado' in session else None
+
+    # Registrar la visualización de la página en la base de datos
+    register_login_log(user_id, url)
+
+    return render_template('public/examenes/examen_dos.html')   
+
+@app.route("/examen-tres")
+def examen_tres():
+    url = "/examen-tres"
+    
+    # Aquí puedes definir user_id según tu lógica de sesión
+    user_id = session.get('id') if 'conectado' in session else None
+
+    # Registrar la visualización de la página en la base de datos
+    register_login_log(user_id, url)
+
+    return render_template('public/examenes/examen_tres.html')

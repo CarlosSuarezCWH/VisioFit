@@ -23,9 +23,10 @@
         <tbody>
           {% for usuario in resp_usuariosBD %}
           <tr>
-            <td>{{ usuario.name_surname}}</td>
-            <td>{{ usuario.email_user}}</td>
-            <td>{{ usuario.created_user}}</td>
+            <td>{{ paciente.id }}</td>
+            <td>{{ paciente.first_name }}</td>
+            <td>{{ paciente.last_name }}</td>
+            <td>{{ paciente.email }}</td>
             <td>
               <button
                 class="btn rounded-pill btn-danger"

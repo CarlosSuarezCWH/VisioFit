@@ -1,43 +1,96 @@
 <!DOCTYPE html>
-<html
-  lang="es"
-  class="light-style layout-menu-fixed"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="../assets/"
-  data-template="vertical-menu-template-free">
-  <head>
+<html lang="es" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<head>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+
+
     {% include 'public/includes/head.html' %}
     <!---->
     {% block customCSS %} {% endblock %}
-  </head>
-  <body>
+</head>
+<body>
     {% include 'public/includes/pre_loader.html' %}
     <!---->
     {% include 'public/includes/navbar.html' %}
     <div class="layout-wrapper layout-content-navbar">
-      <div class="layout-container">
-        {% include 'public/includes/menu_sidebar.html' %}
-        <div class="layout-page">
-          <div class="content-wrapper">
-            <div class="container-xxl flex-grow-1 container-p-y">
-              {% include 'public/includes/messages.html' %}
-              <!---->
-              {% block body %}
-              <!--fin del bloque-->
-              {% endblock %}
+        <div class="layout-container">
+            {% include 'public/includes/menu_sidebar.html' %}
+            <div class="layout-page">
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        {% include 'public/includes/messages.html' %}
+                        <!---->
+                        {% block body %}
+                        <!-- fin del bloque -->
+                        <!-- aquí va un popup -->
+                        <div class="modal fade" id="miPopup" tabindex="-1" role="dialog" aria-labelledby="miPopupLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="miPopupLabel">NUESTRO OBJETIVO CONTIGO</h5>
+                                        <button type="button" class="close" data-dismiss="modal" id="cerrarPopup" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                    <p>El objetivo de esta pagina es ofrecer ejercicios específicos y consejos para ayudar a las personas a fortalecer sus músculos oculares, mejorar la coordinación visual, y educar sobre hábitos que favorezcan la salud ocular y reduzcan la progresión de la miopía..</p>
+<br>
+<h5 class="modal-title" id="miPopupLabel">NUESTRA VISIÓN</h5><br>
+<p>Lorem ipsum dolor sit amet, consectetur
+adipiscing elit. Nam tempus magna ut leo
+sagittis, ut varius lectus venenatis. Mauris
+faucibus quam ligula, eu sollicitudin ex
+volutpat at. Nam in ante lacus. Morbi facilisis
+lacus a commodo gravida. Maecenas sed
+sagittis nibh. Ut at gravida ante. Cras sed mi
+rutrum, consequat.</p>
+<br>
+<h5 class="modal-title" id="miPopupLabel">NUESTRA MISIÓN</h5><br>
+<p>Lorem ipsum dolor sit amet, consectetur
+adipiscing elit. Nam tempus magna ut leo
+sagittis, ut varius lectus venenatis. Mauris
+faucibus quam ligula, eu sollicitudin ex
+volutpat at. Nam in ante lacus. Morbi facilisis
+lacus a commodo gravida. Maecenas sed
+sagittis nibh. Ut at gravida ante. Cras sed mi
+rutrum, consequat.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cerrarPopup">Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Script para abrir el popup automáticamente -->
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                                var myModal = new bootstrap.Modal(document.getElementById('miPopup'));
+                                myModal.show();
+                        
+                                // Cierra el modal al hacer clic en el botón de cerrar
+                                document.getElementById('cerrarPopup').addEventListener('click', function() {
+                                    myModal.hide();
+                                });
+                            });
+                        </script>
+                        {% endblock %}
+                    </div>
+                    <div class="content-backdrop fade"></div>
+                </div>
             </div>
-
-            <div class="content-backdrop fade"></div>
-          </div>
         </div>
-      </div>
-
-      <div class="layout-overlay layout-menu-toggle"></div>
+        <div class="layout-overlay layout-menu-toggle"></div>
     </div>
 
     {% include 'public/includes/js.html' %}
     <!--Custom JS-->
     {% block customJS %} {% endblock %}
-  </body>
+</body>
 </html>

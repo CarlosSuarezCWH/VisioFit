@@ -7,51 +7,70 @@
           alt="Logo" />
       </span>
     </a>
-
     <a
       href="javascript:void(0);"
       class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
       <i class="bx bx-chevron-left bx-sm align-middle"></i>
     </a>
   </div>
-
-  <div class="menu-inner-shadow"></div>
+  
   <ul class="menu-inner py-5">
-    <li
-      class="menu-item {% if request.path == '/registrar-empleado' %} active {% endif %}">
-      <a href="{{ url_for('viewFormpaciente') }}" class="menu-link">
-        <i class="menu-icon bi bi-person-bounding-box"></i>
-        <div data-i18n="Basic">Registrar Paciente</div>
-      </a>
-    </li>
-    <li
-      class="menu-item {% if request.path == '/lista-de-paciente' %} active{% endif %}">
-      <a href="/lista-de-paciente" class="menu-link">
-        <i class="menu-icon bi bi-person-lines-fill"></i>
-        <div data-i18n="Boxicons">Lista de Pacientes</div>
-      </a>
-    </li>
-    <li
-      class="menu-item {% if request.path == '/descargar-informe-empleados' %} active {% endif %}">
-      <a href="/descargar-informe-empleados" class="menu-link">
-        <i class="menu-icon bi bi-file-earmark-spreadsheet-fill"></i>
-        <div data-i18n="Tables">Reportes</div>
-      </a>
-    </li>
-    <li
-      class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
-      <a href="/lista-de-usuarios" class="menu-link">
-        <i class="menu-icon bi bi-person-lines-fill"></i>
-        <div data-i18n="Tables">Lista de usuarios</div>
-      </a>
-    </li>
-    <li
-      class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
+    <li class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
       <a href="/mi-perfil" class="menu-link">
         <i class="menu-icon bi bi-person-fill-gear"></i>
         <div data-i18n="Tables">Mi Perfil</div>
       </a>
     </li>
+
+    <!-- Opciones del menú para el normal-->
+    <li class="menu-item {% if request.path in ['/examen-uno', '/examen-dos', '/examen-tres'] %} active {% endif %}">
+      <a href="/examen-uno" class="menu-link">
+        <i class="menu-icon bi bi-person-fill-gear"></i>
+        <div data-i18n="Tables">Examen 1</div>
+      </a>
+    </li>
+    <li class="menu-item {% if request.path == '/examen-dos' %} active {% endif %}">
+      <a href="/examen-dos" class="menu-link">
+        <i class="menu-icon bi bi-person-fill-gear"></i>
+        <div data-i18n="Tables">Examen 2</div>
+      </a>
+    </li>
+    <li class="menu-item {% if request.path == '/examen-tres' %} active {% endif %}">
+      <a href="/examen-tres" class="menu-link">
+        <i class="menu-icon bi bi-person-fill-gear"></i>
+        <div data-i18n="Tables">Examen 3</div>
+      </a>
+    </li>
+
+    {% if 'conectado' in session %}
+      {% if session['type_user'] == 'admin' %}
+        <li class="menu-item {% if request.path == '/registrar-empleado' %} active {% endif %}">
+          <a href="{{ url_for('viewFormpaciente') }}" class="menu-link">
+            <i class="menu-icon bi bi-person-bounding-box"></i>
+            <div data-i18n="Basic">Registrar Paciente</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-paciente' %} active{% endif %}">
+          <a href="/lista-de-paciente" class="menu-link">
+            <i class="menu-icon bi bi-person-lines-fill"></i>
+            <div data-i18n="Boxicons">Lista de Pacientes</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/descargar-informe-pacientes' %} active {% endif %}">
+          <a href="/descargar-informe-pacientes" class="menu-link">
+            <i class="menu-icon bi bi-file-earmark-spreadsheet-fill"></i>
+            <div data-i18n="Tables">Reportes</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
+          <a href="/lista-de-usuarios" class="menu-link">
+            <i class="menu-icon bi bi-person-lines-fill"></i>
+            <div data-i18n="Tables">Lista de usuarios</div>
+          </a>
+        </li>
+      {% endif %}
+    {% endif %}
+
     <li class="menu-item">
       <a href="{{ url_for('cerraSesion') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>

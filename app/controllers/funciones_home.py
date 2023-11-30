@@ -127,74 +127,60 @@ def pacienteReporte():
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 querySQL = ("""
                     SELECT 
-                        e.id_paciente,
-                        e.nombre_paciente, 
-                        e.apellido_paciente,
-                        e.salario_paciente,
-                        e.email_paciente,
-                        e.telefono_paciente,
-                        e.profesion_paciente,
-                        DATE_FORMAT(e.fecha_registro, '%d de %b %Y %h:%i %p') AS fecha_registro,
-                        CASE
-                            WHEN e.sexo_paciente = 1 THEN 'Masculino'
-                            ELSE 'Femenino'
-                        END AS sexo_paciente
-                    FROM tbl_paciente AS e
-                    ORDER BY e.id_paciente DESC
+                        u.first_name as nombre_paciente,
+                        u.last_name as apellido_paciente,
+                        u.email as email_paciente,
+                        u.created_at as fecha_registro,
+                        u.type_user,
+                        l.accessed_url,
+                        l.timestamp
+                    FROM users as u
+                    LEFT JOIN login_logs as l ON u.id = l.user_id
+                    WHERE l.accessed_url LIKE '%examen%'
+                    ORDER BY u.id DESC
                     """)
                 cursor.execute(querySQL,)
-                pacienteBD = cursor.fetchall()
-        return pacienteBD
+                usuarios = cursor.fetchall()
+        return usuarios
     except Exception as e:
-        print(
-            f"Errro en la función pacienteReporte: {e}")
+        print(f"Error en la función obtener_datos_usuarios: {e}")
         return None
 
-
 def generarReporteExcel():
-    datapaciente = pacienteReporte()
+    datos_usuarios = pacienteReporte()
+    
+    if not datos_usuarios:
+        # Manejar el caso en el que no se obtengan datos de usuarios
+        return "No hay datos para generar el informe."
+
     wb = openpyxl.Workbook()
     hoja = wb.active
 
     # Agregar la fila de encabezado con los títulos
-    cabeceraExcel = ("Nombre", "Apellido", "Sexo",
-                     "Telefono", "Email", "Profesión", "Salario", "Fecha de Ingreso")
+    cabeceraExcel = ("Nombre", "Apellido", "Email", "Fecha de Ingreso", "Tipo de Usuario", "Acceso URL", "Fecha de Acceso")
 
     hoja.append(cabeceraExcel)
 
-    # Formato para números en moneda colombiana y sin decimales
-    formato_moneda_colombiana = '#,##0'
-
     # Agregar los registros a la hoja
-    for registro in datapaciente:
+    for registro in datos_usuarios:
         nombre_paciente = registro['nombre_paciente']
         apellido_paciente = registro['apellido_paciente']
-        sexo_paciente = registro['sexo_paciente']
-        telefono_paciente = registro['telefono_paciente']
         email_paciente = registro['email_paciente']
-        profesion_paciente = registro['profesion_paciente']
-        salario_paciente = registro['salario_paciente']
         fecha_registro = registro['fecha_registro']
+        tipo_usuario = registro['type_user']
+        accessed_url = registro['accessed_url']
+        timestamp = registro['timestamp']
 
         # Agregar los valores a la hoja
-        hoja.append((nombre_paciente, apellido_paciente, sexo_paciente, telefono_paciente, email_paciente, profesion_paciente,
-                     salario_paciente, fecha_registro))
-
-        # Itera a través de las filas y aplica el formato a la columna G
-        for fila_num in range(2, hoja.max_row + 1):
-            columna = 7  # Columna G
-            celda = hoja.cell(row=fila_num, column=columna)
-            celda.number_format = formato_moneda_colombiana
+        hoja.append((nombre_paciente, apellido_paciente, email_paciente, fecha_registro, tipo_usuario, accessed_url, timestamp))
 
     fecha_actual = datetime.datetime.now()
-    archivoExcel = f"Reporte_paciente_{fecha_actual.strftime('%Y_%m_%d')}.xlsx"
-    carpeta_descarga = "../static/downloads-excel"
-    ruta_descarga = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), carpeta_descarga)
+    archivoExcel = f"Reporte_usuarios_{fecha_actual.strftime('%Y_%m_%d')}.xlsx"
+    carpeta_descarga = "static/downloads-excel"  # Ruta relativa a la carpeta del proyecto
+    ruta_descarga = os.path.join(os.path.dirname(os.path.abspath(__file__)), carpeta_descarga)
 
     if not os.path.exists(ruta_descarga):
         os.makedirs(ruta_descarga)
-        # Dando permisos a la carpeta
         os.chmod(ruta_descarga, 0o755)
 
     ruta_archivo = os.path.join(ruta_descarga, archivoExcel)
@@ -202,6 +188,7 @@ def generarReporteExcel():
 
     # Enviar el archivo como respuesta HTTP
     return send_file(ruta_archivo, as_attachment=True)
+
 
 
 def buscarpacienteBD(search):
@@ -326,7 +313,7 @@ def lista_usuariosBD():
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT id, name_surname, email_user, created_user FROM users"
+                querySQL = "SELECT id, first_name, email, created_at FROM users where type_user='admin'"
                 cursor.execute(querySQL,)
                 usuariosBD = cursor.fetchall()
         return usuariosBD
