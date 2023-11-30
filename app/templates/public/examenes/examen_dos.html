@@ -16,18 +16,23 @@
     <button id="cambiarImagenBtn" onclick="cambiarImagen()" style="position: absolute; top: 80%; left:85%; transform: translate(-50%, -50%); padding: 10px 15px; font-size: 14px; background-color: #08b324; color: #fff; border: none; border-radius: 25px;">Continuar</button> 
     <img id="imagen1" style="max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/1.png') }}" >
     <img id="imagen2" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/2.png') }}">
+    <img id="imagen3" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/3.png') }}">
+    <img id="imagen4" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/4.png') }}">
+    <img id="imagen5" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/5.png') }}">
 
   </div>
   <div id="punto" class='a' style="display: none;"></div>
 </div>
 
-<script>
-  var puntoAparecido = false; // Variable para rastrear si el punto ha aparecido
-  var velocidadAnimacion = 1000; // Inicializar la velocidad de la animación
-  var tiempoEsperaBoton = 5000; // Inicializar el tiempo de espera para el botón
-  var numCambiosImagen = 0; // Contador de cambios de imagen
+<!-- Agrega jQuery antes de tu script -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-  // Activar el botón desde el principio
+<script>
+  var puntoAparecido = false;
+  var velocidadAnimacion = 1000;
+  var tiempoEsperaBoton = 5000;
+  var numCambiosImagen = 0;
+
   document.getElementById('cambiarImagenBtn').style.display = 'block';
 
   $(document).ready(function () {
@@ -35,46 +40,38 @@
   });
 
   function cambiarImagen() {
-    // Ocultar el botón al cambiar la imagen
     document.getElementById('cambiarImagenBtn').style.display = 'none';
 
-    // Mostrar la imagen correspondiente
-    var currentImage = document.getElementById('imagen2');
-    currentImage.style.display = 'block';
+    var currentImageId = 'imagen' + (numCambiosImagen + 1);
+    var nextImageId = 'imagen' + (numCambiosImagen + 2);
 
-    // Ocultar la imagen anterior
-    var previousImage = document.getElementById('imagen1');
-    previousImage.style.display = 'none';
+    var currentImage = document.getElementById(currentImageId);
+    currentImage.style.display = 'none';
 
-  
-    // Aumentar la velocidad de la animación del punto
+    var nextImage = document.getElementById(nextImageId);
+    nextImage.style.display = 'block';
+
     velocidadAnimacion -= 100;
 
-    // Aparecer el punto si no ha aparecido aún
     if (!puntoAparecido) {
       puntoAparecido = true;
       document.getElementById('punto').style.display = 'block';
     }
 
-    // Aumentar el contador de cambios de imagen
     numCambiosImagen++;
 
-    // Después de 10 segundos, mostrar el botón y cambiar la imagen de fondo nuevamente
     setTimeout(function () {
       document.getElementById('cambiarImagenBtn').style.display = 'block';
 
-      // Verificar si es la última vez que se cambia la imagen y ocultar el punto
       if (numCambiosImagen === 3) {
         document.getElementById('punto').style.display = 'none';
       }
     }, tiempoEsperaBoton);
 
-    // Aumentar el tiempo de espera para el próximo clic en el botón
     tiempoEsperaBoton += 5000;
   }
 
   function makeNewPosition() {
-    // Obtener dimensiones del viewport (restar la dimensión del div)
     var h = $(window).height() - 50;
     var w = $(window).width() - 50;
     var nh = Math.floor(Math.random() * h);
