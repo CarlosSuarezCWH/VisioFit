@@ -1,75 +1,160 @@
 {% extends 'public/base_cpanel.html' %}
-
 {% block body %}
 <style>
+  .imagenDiv {
+    height: 80vh;
+    background-color: #D6FFC3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    max-width: 600px; /* Ajusta el ancho máximo según sea necesario */
+    position: relative; /* Agrega posición relativa para posicionar elementos hijos */
+  }
+  .titulo {
+    font-size: 3em;
+    font-weight: bold;
+  }
+  .descripcion {
+    font-size: 2em;
+    white-space: pre-wrap; /* Permite que el texto se ajuste y se divida en varias líneas */
+  }
   div.a {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     background-color: red;
-    position: fixed;
+    position: absolute;
+  }
+  .contador {
+    font-size: 2em;
+    position: absolute;
+    bottom: 20px; /* Ajusta según sea necesario */
+    visibility: visible; /* Asegura que el elemento esté visible */
   }
 </style>
-
 <div class="row justify-content-center mb-2">
   <div class="table-responsive text-nowrap table-hover">
-    <button id="cambiarImagenBtn" onclick="cambiarImagen()" style="position: absolute; top: 80%; left:85%; transform: translate(-50%, -50%); padding: 10px 15px; font-size: 14px; background-color: #08b324; color: #fff; border: none; border-radius: 25px;">Continuar</button> 
-    <img id="imagen1" style="max-width: 100%; height: auto;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/1.png') }}" >
-    <img id="imagen2" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/2.png') }}">
-    <img id="imagen3" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/3.png') }}">
-    <img id="imagen4" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/4.png') }}">
-    <img id="imagen5" style="max-width: 100%; height: auto; display: none;" src="{{ url_for('static', filename ='./assets/img/examenes/segundo_nivel/5.png') }}">
-
+    <div id="contador" class="contador"></div>
+    <div id="imagen1" class="imagenDiv imagen1" style="display: flex; flex-direction: column; margin: 0 auto;">
+      <br><p class="titulo">Instrucciones</p>
+      <p class="descripcion">Sigue el punto durante el tiempo indicado, la imagen se irá moviendo cada vez más rápido.</p>
+    </div>
+    <div id="imagen2" class="imagenDiv imagen2" style="display: none; margin: 0 auto;">
+      <br><p class="titulo">Instrucciones</p><p class="descripcion">Sigue el punto 5 seg.</p>
+    </div>
+    <div id="imagen3" class="imagenDiv imagen3" style="display: none; margin: 0 auto;">
+      <br><p class="titulo">Instrucciones</p><p class="descripcion">Sigue el punto 10seg.</p>
+    </div>
+    <div id="imagen4" class="imagenDiv imagen4" style="display: none; margin: 0 auto;">
+      <br><p class="titulo">Instrucciones</p><p class="descripcion">Sigue el punto 15seg.</p>
+    </div>
+    <div id="imagen5" class="imagenDiv imagen5" style="display: none; margin: 0 auto;">
+      <br><p class="titulo">Teminamos</p><p class="descripcion"> Vuelve pronto</p>
+    </div>
+    <button id="cambiarImagenBtn" onclick="cambiarImagen()" style="position: absolute; top: 88%; left:59%; transform: translate(-50%, -50%); padding: 10px 15px; font-size: 14px; background-color: #08b324; color: #fff; border: none; border-radius: 25px;">Continuar</button>
+    <div id="punto" class='a' style="display: none;">
+      <script>
+        $(document).ready(function () {
+          $(this).on('show', '#punto', function () {
+            var contadorElement = document.createElement('div');
+            contadorElement.id = 'contadorTemporal';
+            contadorElement.textContent = 5;
+            $(this).append(contadorElement);
+            iniciarContadorRegresivo(contadorElement);
+          });
+        });
+      </script>
+    </div>
   </div>
-  <div id="punto" class='a' style="display: none;"></div>
 </div>
 
-<!-- Agrega jQuery antes de tu script -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   var puntoAparecido = false;
   var velocidadAnimacion = 1000;
   var tiempoEsperaBoton = 5000;
   var numCambiosImagen = 0;
+  var contadorElement = document.getElementById('contador');
+  var contador = 0; // Variable global para el contador
 
   document.getElementById('cambiarImagenBtn').style.display = 'block';
 
-  $(document).ready(function () {
-    animateDiv('.a');
-  });
-
-  function cambiarImagen() {
-    document.getElementById('cambiarImagenBtn').style.display = 'none';
-
-    var currentImageId = 'imagen' + (numCambiosImagen + 1);
-    var nextImageId = 'imagen' + (numCambiosImagen + 2);
-
-    var currentImage = document.getElementById(currentImageId);
-    currentImage.style.display = 'none';
-
-    var nextImage = document.getElementById(nextImageId);
-    nextImage.style.display = 'block';
-
-    velocidadAnimacion -= 100;
-
-    if (!puntoAparecido) {
-      puntoAparecido = true;
-      document.getElementById('punto').style.display = 'block';
+  function iniciarContadorRegresivo() {
+    if (document.getElementById('imagen2').style.display === 'block') {
+      contador = 5;
+    } else if (document.getElementById('imagen3').style.display === 'block') {
+      contador = 10;
+    } else if (document.getElementById('imagen4').style.display === 'block') {
+      contador = 15;
     }
 
-    numCambiosImagen++;
-
-    setTimeout(function () {
-      document.getElementById('cambiarImagenBtn').style.display = 'block';
-
-      if (numCambiosImagen === 3) {
-        document.getElementById('punto').style.display = 'none';
-      }
-    }, tiempoEsperaBoton);
-
-    tiempoEsperaBoton += 5000;
+    actualizarContador();
   }
+
+  function actualizarContador() {
+    contadorElement.textContent = contador;
+    if (contador === 0) {
+      // Reiniciar el contador con el valor correcto
+      if (document.getElementById('imagen2').style.display === 'block') {
+        contador = 5;
+      } else if (document.getElementById('imagen3').style.display === 'block') {
+        contador = 10;
+      } else if (document.getElementById('imagen4').style.display === 'block') {
+        contador = 15;
+      }
+    } else {
+      contador--;
+      setTimeout(actualizarContador, 1000);
+    }
+  }
+
+  function cambiarImagen() {
+  document.getElementById('cambiarImagenBtn').style.display = 'none';
+  var currentImageId = 'imagen' + (numCambiosImagen + 1);
+  var nextImageId = 'imagen' + (numCambiosImagen + 2);
+  var currentImage = document.getElementById(currentImageId);
+  currentImage.style.display = 'none';
+  var nextImage = document.getElementById(nextImageId);
+  nextImage.style.display = 'block';
+
+  // Check the currently displayed image div and set the countdown timer accordingly
+  if (nextImageId === 'imagen2') {
+    contador = 5;
+    var velocidadAnimacion = 500;
+    iniciarContadorRegresivo(); // Start the countdown timer for 5 seconds
+  } else if (nextImageId === 'imagen3') {
+    contador = 10;
+    var velocidadAnimacion = 400;
+    iniciarContadorRegresivo(); // Start the countdown timer for 10 seconds
+  } else if (nextImageId === 'imagen4') {
+    contador = 15;
+    var velocidadAnimacion = 300;
+    iniciarContadorRegresivo(); // Start the countdown timer for 15 seconds
+  }
+
+  if (!puntoAparecido) {
+    puntoAparecido = true;
+    document.getElementById('punto').style.display = 'block';
+    animateDiv('punto'); // Start animating the point
+  }
+
+  numCambiosImagen++;
+
+  setTimeout(function () {
+    document.getElementById('cambiarImagenBtn').style.display = 'block';
+
+    if (numCambiosImagen === 3) {
+      document.getElementById('punto').style.display = 'none';
+    }
+  }, tiempoEsperaBoton);
+
+  // Increase the wait time between image changes
+  tiempoEsperaBoton += 5000;
+}
 
   function makeNewPosition() {
     var h = $(window).height() - 50;
@@ -85,6 +170,10 @@
       animateDiv(myclass);
     });
   }
+
+  $(document).ready(function () {
+    animateDiv('.a');
+  });
 </script>
 
 {% endblock %}

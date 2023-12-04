@@ -1,4 +1,5 @@
-
+import base64
+import matplotlib.pyplot as plt
 # Para subir archivo tipo foto al servidor
 from werkzeug.utils import secure_filename
 import uuid  # Modulo de python para crear un string
@@ -8,7 +9,7 @@ from conexion.conexionBD import connectionBD  # Conexión a BD
 import datetime
 import re
 import os
-
+import io
 from os import remove  # Modulo  para remover archivo
 from os import path  # Modulo para obtener la ruta o directorio
 
@@ -118,6 +119,61 @@ def sql_detalles_pacienteBD(idpaciente):
         print(
             f"Errro en la función sql_detalles_pacienteBD: {e}")
         return None
+
+#generar grafica
+def grafica():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT 
+                        DATE(l.timestamp) as fecha,
+                        COUNT(*) as cantidad_accesos
+                    FROM users as u
+                    LEFT JOIN login_logs as l ON u.id = l.user_id
+                    WHERE l.accessed_url LIKE '%examen%'
+                    GROUP BY fecha
+                    ORDER BY fecha
+                """
+                cursor.execute(querySQL,)
+                datos_accesos = cursor.fetchall()
+
+        if datos_accesos:
+            # Extraer fechas y cantidades
+            fechas = [registro['fecha'] for registro in datos_accesos]
+            cantidades = [registro['cantidad_accesos'] for registro in datos_accesos]
+            # Ajustar el tamaño de la gráfica
+            plt.figure(figsize=(4, 4))
+            # Crear la gráfica
+            plt.plot(fechas, cantidades, linestyle='-', marker='o', label='Accesos')
+
+            # Personalizar título y etiquetas
+            plt.title('Accesos por Fecha', fontsize=7, fontweight='bold')
+            plt.xlabel('Fecha', fontsize=7)
+            #plt.ylabel('Cantidad de Accesos', fontsize=7)
+
+            # Rotar las etiquetas del eje x para mayor claridad
+            plt.xticks(rotation=45, ha='right', fontsize=7)
+
+            # Añadir leyenda
+            plt.legend(loc='upper left', fontsize=7)
+
+            # Guardar la gráfica en formato PNG
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+            plt.close()
+
+            # Devolver el código HTML para incrustar la gráfica
+            graph_html = f'<img src="data:image/png;base64,{image_base64}" alt="Gráfica de Accesos">'
+            return datos_accesos, graph_html
+        else:
+            return datos_accesos, None
+    except Exception as e:
+        print(f"Error en la función grafica: {e}")
+        return None, None
+
 
 
 # Funcion paciente Informe (Reporte)

@@ -10,15 +10,19 @@ from werkzeug.security import check_password_hash
 
 # Importando controllers para el modulo de login
 from controllers.funciones_login import *
+from controllers.funciones_home import *
+
 PATH_URL_LOGIN = "public/login"
 
 
 @app.route('/', methods=['GET'])
 def inicio():
     if 'conectado' in session:
-        return render_template('public/base_cpanel.html', dataLogin=dataLoginSesion())
+        _, graph_html = grafica()  # Ignoramos los datos_accesos ya que no se están utilizando
+        return render_template('public/base_cpanel.html', dataLogin=dataLoginSesion(), graph_html=graph_html)
     else:
         return render_template(f'{PATH_URL_LOGIN}/base_login.html')
+
 
 
 @app.route('/mi-perfil', methods=['GET'])
